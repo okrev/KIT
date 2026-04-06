@@ -54,6 +54,12 @@ loginForm.addEventListener('submit', (e) => {
   loginBtn.disabled = true;
   loginBtn.querySelector('.btn-text').style.display = 'none';
   loginBtn.querySelector('.btn-loader').style.display = 'flex';
+  
+  // Disable inputs while logging in
+  loginId.disabled = true;
+  loginPw.disabled = true;
+  if (univIdEl) univIdEl.disabled = true;
+
   setLoginStatus('로그인 시도 중...', 'info');
 
   window.api.send('login', { univId, id, pw });
@@ -86,6 +92,12 @@ window.api.receive('login-fail', () => {
   loginBtn.disabled = false;
   loginBtn.querySelector('.btn-text').style.display = '';
   loginBtn.querySelector('.btn-loader').style.display = 'none';
+  
+  // Re-enable inputs
+  loginId.disabled = false;
+  loginPw.disabled = false;
+  const univIdEl = document.getElementById('login-univ');
+  if (univIdEl) univIdEl.disabled = false;
 });
 
 /* 진행 상황 */

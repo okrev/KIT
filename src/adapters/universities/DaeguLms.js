@@ -1,4 +1,5 @@
 const HelloLmsAdapter = require('../HelloLmsAdapter');
+const { BrowserWindow } = require('electron');
 
 class DaeguLms extends HelloLmsAdapter {
   constructor() {
@@ -10,22 +11,32 @@ class DaeguLms extends HelloLmsAdapter {
     
     return new Promise((resolve) => {
       let resolved = false;
+      
+      const loginWin = new BrowserWindow({
+        width: 1100,
+        height: 800,
+        show: true,
+        title: '대구대학교 LMS 로그인 – 2차 인증을 완료해 주세요',
+        autoHideMenuBar: true,
+      });
+
       const done = (success) => {
         if (resolved) return;
         resolved = true;
+        try { loginWin.close(); } catch (_) {}
         resolve(success);
       };
 
       const ssoUrl = 'https://sso.daegu.ac.kr/login.jsp?type=login&ms=10&returnURI=https://lms.daegu.ac.kr/ilos/bandi/sso/index.jsp';
-      this.crawlWin.loadURL(ssoUrl);
+      loginWin.loadURL(ssoUrl);
 
-      this.crawlWin.webContents.on('did-finish-load', async () => {
-        const url = this.crawlWin.webContents.getURL();
+      loginWin.webContents.on('did-finish-load', async () => {
+        const url = loginWin.webContents.getURL();
         
         if (url.includes('sso.daegu.ac.kr') && url.includes('login')) {
           this.logProgress('아이디/비밀번호 입력 중...');
           try {
-            await this.executeInBrowser(`
+            await loginWin.webContents.executeJavaScript(`
               var idEl = document.getElementById('usr_id');
               var pwEl = document.getElementById('usr_pw');
               if (idEl) { idEl.value = ${JSON.stringify(credentials.id)}; idEl.dispatchEvent(new Event('input', {bubbles:true})); }
@@ -33,7 +44,7 @@ class DaeguLms extends HelloLmsAdapter {
             `);
             // Delay a bit
             await new Promise(r => setTimeout(r, 500));
-            await this.executeInBrowser(`
+            await loginWin.webContents.executeJavaScript(`
               var btn = document.querySelector('.btn_login') || document.querySelector('button[type="submit"]');
               if (btn) btn.click();
             `);
@@ -48,11 +59,13 @@ class DaeguLms extends HelloLmsAdapter {
         }
       });
 
-      this.crawlWin.webContents.on('did-navigate', (_e, url) => {
+      loginWin.webContents.on('did-navigate', (_e, url) => {
         if (url.includes('lms.daegu.ac.kr') && !url.includes('login')) {
           done(true);
         }
       });
+
+      loginWin.on('closed', () => { done(false); });
 
       // Timeout 3 mins
       setTimeout(() => { if (!resolved) { this.logProgress('⏰ 로그인 시간 초과'); done(false); } }, 180000);
