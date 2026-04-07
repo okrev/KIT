@@ -18,6 +18,7 @@ class KnuLms extends LmsAdapter {
 
     return new Promise((resolve) => {
       let resolved = false;
+      let loginAttempted = false;
 
       const loginWin = new BrowserWindow({
         width: 1100,
@@ -40,25 +41,45 @@ class KnuLms extends LmsAdapter {
         const url = loginWin.webContents.getURL();
 
         if (url.includes('sso.knu.ac.kr') || url.includes('login')) {
-          this.logProgress('SSO 로그인 창입니다. 로그인 정보를 자동 입력합니다...');
-          try {
-            await loginWin.webContents.executeJavaScript(`
-              var idEl = document.querySelector('input[type="text"]');
-              var pwEl = document.querySelector('input[type="password"]');
-              if (idEl && pwEl) {
-                idEl.value = ${JSON.stringify(credentials.id)};
-                idEl.dispatchEvent(new Event('input', {bubbles:true}));
-                pwEl.value = ${JSON.stringify(credentials.pw)};
-                pwEl.dispatchEvent(new Event('input', {bubbles:true}));
-                
-                var btn = document.querySelector('button[type="submit"]') || document.querySelector('.btn_login') || document.querySelector('#login_btn') || document.querySelector('input[type="submit"]');
-                if (btn) {
-                   setTimeout(() => btn.click(), 500);
+          if (!loginAttempted) {
+            loginAttempted = true;
+            this.logProgress('SSO 로그인 창입니다. 로그인 정보를 자동 입력합니다...');
+            try {
+              await loginWin.webContents.executeJavaScript(`
+                var idEl = document.querySelector('input[type="text"]');
+                var pwEl = document.querySelector('input[type="password"]');
+                if (idEl && pwEl) {
+                  idEl.value = ${JSON.stringify(credentials.id)};
+                  idEl.dispatchEvent(new Event('input', {bubbles:true}));
+                  pwEl.value = ${JSON.stringify(credentials.pw)};
+                  pwEl.dispatchEvent(new Event('input', {bubbles:true}));
+                  
+                  var btn = document.querySelector('button[type="submit"]') || document.querySelector('.btn_login') || document.querySelector('#login_btn') || document.querySelector('input[type="submit"]');
+                  if (btn) {
+                     setTimeout(() => btn.click(), 500);
+                  }
                 }
-              }
-            `);
-          } catch(e) {
-            console.error('KNU Login auto-fill error:', e);
+              `);
+            } catch(e) {
+              console.error('KNU Login auto-fill error:', e);
+            }
+          } else {
+            try {
+              const errMsg = await loginWin.webContents.executeJavaScript(`
+                (function() {
+                  var idEl = document.querySelector('input[type="text"]');
+                  if (!idEl) return 'PROCESSING'; // 로그인 폼이 없으면 중간 리다이렉트 중
+                  
+                  var msgs = Array.from(document.querySelectorAll('span, div, p, .alert, .error')).filter(e => e.innerText && (e.innerText.includes('일치') || e.innerText.includes('권한') || e.innerText.includes('실패') || e.innerText.includes('오류')));
+                  return msgs.length > 0 ? msgs[0].innerText.trim() : '아이디 또는 비밀번호가 올바르지 않거나 2차 인증이 필요합니다.';
+                })();
+              `);
+              
+              if (errMsg === 'PROCESSING') return; // 리다이렉트 통과
+              
+              this.logProgress('❌ ' + errMsg);
+            } catch(e) {}
+            done(false);
           }
         }
       });
