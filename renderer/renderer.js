@@ -251,6 +251,19 @@ function renderTab(tabName, detail) {
   }
 
   modalBody.innerHTML = buildTable([], data);
+  modalBody.querySelectorAll('tr.clickable-row').forEach((tr) => {
+    tr.addEventListener('click', () => {
+      const title = tr.getAttribute('data-title') || '상세 보기';
+      const enc = tr.getAttribute('data-link') || '';
+      let link = '';
+      try {
+        link = enc ? decodeURIComponent(enc) : '';
+      } catch (_) {
+        link = enc;
+      }
+      if (link) openDetailModal(title, link, window.currentCourseKey);
+    });
+  });
 }
 
 /* ── 유틸리티 ──────────────────────────────────────────── */
@@ -271,7 +284,9 @@ function buildTable(headers, rows) {
       if (row.cells && Array.isArray(row.cells)) {
         const columns = row.cells.map((cell) => `<td>${cell || '-'}</td>`).join('');
         if (row.link) {
-          return `<tr class="clickable-row" onclick="openDetailModal('${escapeHtml(row.title || '상세 보기')}', '${row.link}', window.currentCourseKey)">${columns}</tr>`;
+          const t = escapeHtml(row.title || '상세 보기');
+          const enc = encodeURIComponent(row.link);
+          return `<tr class="clickable-row" data-title="${t}" data-link="${enc}">${columns}</tr>`;
         }
         return `<tr>${columns}</tr>`;
       }
@@ -298,12 +313,45 @@ async function openDetailModal(title, url, courseKey) {
   detailContent.style.display = 'none';
   detailLoading.style.display = 'block';
   detailModal.style.display = 'flex';
-  
-  const contentHtml = await window.api.invoke('fetch-detail', { url, courseKey });
-  
+
+  const res = await window.api.invoke('fetch-detail', { url, courseKey });
+  const contentHtml =
+    res && typeof res.html === 'string'
+      ? res.html
+      : '<p style="padding:20px;text-align:center;">불러오지 못했습니다.</p>';
+  const attachments = res && Array.isArray(res.attachments) ? res.attachments : [];
+
   detailLoading.style.display = 'none';
   detailContent.style.display = 'block';
-  detailContent.innerHTML = contentHtml;
+
+  let attBlock = '';
+  if (attachments.length > 0) {
+    const buttons = attachments
+      .map((a) => {
+        const name = escapeHtml(a.name || '파일');
+        const u = encodeURIComponent(a.url || '');
+        return `<button type="button" class="btn-lms-dl" data-dl="${u}" style="display:block;width:100%;text-align:left;margin:6px 0;padding:10px 12px;border-radius:8px;border:1px solid rgba(255,255,255,0.12);background:rgba(90,200,250,0.1);color:#9ecbff;cursor:pointer;font-size:13px;">⬇ ${name}</button>`;
+      })
+      .join('');
+    attBlock = `<div class="lms-attachments" style="margin-bottom:14px;padding:12px;border-radius:10px;background:rgba(0,0,0,0.25);border:1px solid rgba(255,255,255,0.08);"><div style="font-weight:600;margin-bottom:6px;font-size:13px;opacity:0.9;">첨부 / 강의자료 다운로드</div>${buttons}</div>`;
+  }
+
+  detailContent.innerHTML = attBlock + `<div class="detail-body">${contentHtml}</div>`;
+
+  detailContent.querySelectorAll('.btn-lms-dl').forEach((btn) => {
+    btn.addEventListener('click', async (ev) => {
+      ev.preventDefault();
+      ev.stopPropagation();
+      const enc = btn.getAttribute('data-dl');
+      let rawUrl = '';
+      try {
+        rawUrl = enc ? decodeURIComponent(enc) : '';
+      } catch (_) {
+        rawUrl = enc || '';
+      }
+      if (rawUrl) await window.api.invoke('download-lms-file', rawUrl);
+    });
+  });
 }
 
 function buildStatBadges(detail) {

@@ -102,6 +102,7 @@ app.whenReady().then(() => {
 
     currentAdapter.setCrawlWindow(getOrCreateCrawlWindow());
     currentAdapter.setProgressCallback(sendProgress);
+    currentAdapter.lmsUserId = credentials.id;
 
     sendProgress('로그인 시도 중...');
     const success = await currentAdapter.login(credentials);
@@ -122,12 +123,39 @@ app.whenReady().then(() => {
 
 app.on('window-all-closed', () => app.quit());
 
-ipcMain.handle('fetch-detail', async (event, { url, courseKey }) => {
-  if (!currentAdapter) return '<p>어댑터가 초기화되지 않았습니다.</p>';
+ipcMain.handle('fetch-detail', async (_event, { url, courseKey }) => {
+  if (!currentAdapter) {
+    return { html: '<p>어댑터가 초기화되지 않았습니다.</p>', attachments: [] };
+  }
   try {
-    return await currentAdapter.fetchDetailContent(url, courseKey);
+    const out = await currentAdapter.fetchDetailContent(url, courseKey);
+    if (typeof out === 'string') return { html: out, attachments: [] };
+    if (!out || typeof out.html !== 'string') {
+      return { html: '<p style="padding:20px;text-align:center;">불러오기 결과가 올바르지 않습니다.</p>', attachments: [] };
+    }
+    return { html: out.html, attachments: out.attachments || [] };
   } catch (err) {
     console.error('Fetch detail error:', err);
-    return '<p style="padding:20px;text-align:center;">불러오기 에러가 발생했습니다.</p>';
+    return { html: '<p style="padding:20px;text-align:center;">불러오기 에러가 발생했습니다.</p>', attachments: [] };
+  }
+});
+
+ipcMain.handle('download-lms-file', async (_event, fileUrl) => {
+  const win = getOrCreateCrawlWindow();
+  if (!win || win.isDestroyed()) return { ok: false, error: '크롤러 창이 없습니다.' };
+  const base =
+    currentAdapter && currentAdapter.baseUrl
+      ? String(currentAdapter.baseUrl).replace(/\/$/, '')
+      : 'https://lms.daegu.ac.kr';
+  let full = String(fileUrl || '').trim();
+  if (!full) return { ok: false, error: 'URL이 비었습니다.' };
+  if (!/^https?:\/\//i.test(full)) {
+    full = base + (full.startsWith('/') ? full : '/' + full);
+  }
+  try {
+    win.webContents.downloadURL(full);
+    return { ok: true };
+  } catch (e) {
+    return { ok: false, error: String(e.message || e) };
   }
 });

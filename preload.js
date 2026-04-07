@@ -34,7 +34,7 @@ contextBridge.exposeInMainWorld('api', {
     }
   },
   invoke: (channel, data) => {
-    const validChannels = ['fetch-detail'];
+    const validChannels = ['fetch-detail', 'download-lms-file'];
     if (validChannels.includes(channel)) {
       return ipcRenderer.invoke(channel, data);
     }

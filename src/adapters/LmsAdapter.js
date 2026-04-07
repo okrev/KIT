@@ -3,6 +3,8 @@ class LmsAdapter {
     this.baseUrl = baseUrl;
     this.crawlWin = null; // Background browser window for crawling
     this.onProgress = null; // Progress callback
+    /** @type {string|undefined} Hello LMS 등에서 목록/상세 POST의 ud 파라미터로 사용 */
+    this.lmsUserId = undefined;
   }
 
   /**
