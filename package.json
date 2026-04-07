@@ -14,12 +14,8 @@
       "output": "dist"
     },
     "win": {
-      "target": ["nsis"]
-    },
-    "nsis": {
-      "oneClick": false,
-      "perMachine": false,
-      "allowToChangeInstallationDirectory": true
+      "target": ["portable"],
+      "signAndEditExecutable": false
     }
   },
   "dependencies": {
