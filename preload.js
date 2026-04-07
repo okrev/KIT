@@ -4,6 +4,7 @@ contextBridge.exposeInMainWorld('api', {
   send: (channel, data) => {
     const validChannels = [
       'login',
+      'logout',
       'start-crawl',
       'open-course-detail',
       'export-data',
@@ -20,6 +21,7 @@ contextBridge.exposeInMainWorld('api', {
     const validChannels = [
       'login-success',
       'login-fail',
+      'logout-success',
       'login-progress',
       'crawl-progress',
       'crawl-complete',
@@ -34,7 +36,7 @@ contextBridge.exposeInMainWorld('api', {
     }
   },
   invoke: (channel, data) => {
-    const validChannels = ['fetch-detail', 'download-lms-file'];
+    const validChannels = ['fetch-detail', 'download-lms-file', 'generate-ai-response'];
     if (validChannels.includes(channel)) {
       return ipcRenderer.invoke(channel, data);
     }

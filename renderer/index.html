@@ -1,22 +1,18 @@
 <!DOCTYPE html>
 <html lang="ko">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Smart Campus Portal</title>
+  <title>EduPlatform</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
-
-  <!-- ===== 커스텀 타이틀바 ===== -->
   <header id="titlebar">
     <div class="titlebar-drag">
-      <span class="titlebar-icon">✧</span>
+      <span class="titlebar-icon">E</span>
       <span class="titlebar-text">EduPlatform</span>
     </div>
     <div class="titlebar-controls">
@@ -26,210 +22,354 @@
     </div>
   </header>
 
-  <!-- ===== 로그인 뷰 ===== -->
-  <section id="login-view" class="view active">
-    <!-- 배경 추상 도형 -->
+  <div id="school-nav-bar">
+    <button id="school-switcher-trigger" type="button" class="school-switcher-trigger">
+      <span class="school-switcher-copy">
+        <span class="tab-bar-kicker">School Workspace</span>
+        <strong id="nav-active-school-label">학교 디렉터리</strong>
+        <span id="nav-active-school-meta">검색 또는 최근 학교로 빠르게 전환하세요</span>
+      </span>
+      <span class="switcher-chevron">⌄</span>
+    </button>
+
+    <label class="nav-search-shell" for="school-directory-search">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="11" cy="11" r="8"></circle>
+        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+      </svg>
+      <input id="school-directory-search" type="search" placeholder="학교 검색 또는 전환">
+    </label>
+
+    <div class="school-nav-actions">
+      <div id="nav-quick-schools" class="nav-quick-schools"></div>
+      <button id="school-directory-home-btn" type="button" class="nav-action-btn">학교 찾기</button>
+    </div>
+  </div>
+
+  <section id="home-view" class="view active">
+    <div class="login-bg">
+      <div class="bg-shape shape-1"></div>
+      <div class="bg-shape shape-2"></div>
+    </div>
+    <div class="home-shell directory-home">
+      <section class="directory-panel">
+        <div class="directory-panel-head">
+          <span class="eyebrow">School Directory</span>
+          <h1>학교가 많아져도 검색과 최근 기록으로 바로 들어갑니다</h1>
+          <p class="hero-desc">
+            사용자는 보통 1~2개 학교만 실제로 쓰기 때문에, 학교를 탭처럼 계속 쌓는 대신 검색 가능한 디렉터리와
+            현재 작업 중인 학교 워크스페이스를 분리했습니다.
+          </p>
+        </div>
+
+        <div class="directory-toolbar">
+          <div id="directory-result-count" class="directory-count-badge">0개 학교</div>
+          <div id="school-directory-filters" class="directory-filter-row">
+            <button type="button" class="directory-filter-btn active" data-filter="all">전체</button>
+            <button type="button" class="directory-filter-btn" data-filter="favorites">즐겨찾기</button>
+            <button type="button" class="directory-filter-btn" data-filter="recent">최근 사용</button>
+            <button type="button" class="directory-filter-btn" data-filter="connected">연결됨</button>
+            <button type="button" class="directory-filter-btn" data-filter="available">연결 가능</button>
+          </div>
+        </div>
+
+        <div id="school-directory-sections" class="directory-sections"></div>
+      </section>
+
+      <aside class="directory-preview-panel">
+        <span id="directory-selected-status" class="directory-status-chip available">연결 가능</span>
+
+        <div class="directory-preview-header">
+          <div id="directory-selected-logo" class="directory-preview-logo daegu-color">DU</div>
+          <div class="directory-preview-copy">
+            <h2 id="directory-selected-name">대구대학교</h2>
+            <p id="directory-selected-subtitle" class="hero-desc">
+              Hello LMS 기반 강의, 공지, 자료를 빠르게 정리합니다.
+            </p>
+          </div>
+        </div>
+
+        <div id="directory-selected-tags" class="preview-tag-row"></div>
+        <div id="directory-selected-highlights" class="preview-stat-grid"></div>
+
+        <div class="preview-actions">
+          <button id="directory-primary-action" type="button" class="btn-primary preview-primary-btn">이 학교 연결하기</button>
+          <button id="directory-favorite-btn" type="button" class="secondary-btn preview-secondary-btn">즐겨찾기 추가</button>
+        </div>
+
+        <p id="directory-preview-note" class="preview-note">
+          학교 수가 늘어나도 검색, 최근 사용, 즐겨찾기 흐름으로 같은 방식으로 접근합니다.
+        </p>
+      </aside>
+    </div>
+  </section>
+
+  <section id="login-view" class="view">
     <div class="login-bg">
       <div class="bg-shape shape-1"></div>
       <div class="bg-shape shape-2"></div>
     </div>
 
-    <!-- 폼 컨테이너 -->
-    <div class="login-card">
-      <div class="login-logo">
-        <div class="logo-circle">
-          <span>E</span>
+    <div class="login-shell">
+      <aside class="login-intro-card">
+        <button id="back-to-home-btn" type="button" class="ghost-btn">학교 디렉터리로</button>
+        <span id="selected-platform-badge" class="platform-badge">대구대학교</span>
+        <h1 id="login-platform-name">학습 계정을 연결합니다</h1>
+        <p id="login-platform-hint" class="hero-desc">
+          로그인 후 과목, 일정, 세부 자료를 자동으로 정리해 가장 먼저 봐야 할 정보를 중심에 배치합니다.
+        </p>
+
+        <div class="login-feature-list">
+          <div class="login-feature-item">
+            <strong>동기화 흐름이 명확합니다</strong>
+            <p>로그인 직후 데이터 수집 상태를 단계별로 확인할 수 있습니다.</p>
+          </div>
+          <div class="login-feature-item">
+            <strong>과목 탐색이 쉬워집니다</strong>
+            <p>연결이 끝나면 과목 검색, 상세 탭, 시간표 요약이 즉시 준비됩니다.</p>
+          </div>
+          <div class="login-feature-item">
+            <strong>실행 가능한 화면으로 정리됩니다</strong>
+            <p>과목, 학생 정보, 일정, 보조 패널이 역할별로 구분된 구조로 배치됩니다.</p>
+          </div>
         </div>
-        <h1>EduPlatform</h1>
-        <p class="login-subtitle">스마트 학습 경험을 시작하세요</p>
+      </aside>
+
+      <div class="login-card">
+        <div class="login-logo">
+          <div class="logo-circle">
+            <span>E</span>
+          </div>
+          <h2>빠르게 시작하기</h2>
+          <p class="login-subtitle">학교 포털 계정으로 연결한 뒤 학습 정보를 정리합니다.</p>
+        </div>
+
+        <form id="login-form" autocomplete="off">
+          <input type="hidden" id="login-univ" value="daegu">
+
+          <div class="input-group">
+            <label for="login-id">학번 / 아이디</label>
+            <div class="input-wrapper">
+              <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                <circle cx="12" cy="7" r="4" />
+              </svg>
+              <input type="text" id="login-id" placeholder="학번 또는 계정을 입력하세요" required>
+            </div>
+          </div>
+
+          <div class="input-group">
+            <label for="login-pw">비밀번호</label>
+            <div class="input-wrapper">
+              <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+              </svg>
+              <input type="password" id="login-pw" placeholder="비밀번호를 입력하세요" required>
+            </div>
+          </div>
+
+          <button type="submit" id="login-btn" class="btn-primary">
+            <span class="btn-text">연결 시작</span>
+            <div class="btn-loader">
+              <div class="spinner"></div>
+            </div>
+          </button>
+        </form>
+
+        <div id="login-status" class="status-msg"></div>
+        <p class="login-hint">2차 인증이 필요한 학교는 로그인 창에서 추가 인증을 마무리해 주세요.</p>
       </div>
-
-      <form id="login-form" autocomplete="off">
-        <!-- 소속 학교 -->
-        <div class="input-group">
-          <label for="login-univ">소속 캠퍼스</label>
-          <div class="input-wrapper">
-            <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
-              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
-            </svg>
-            <select id="login-univ"
-              style="width: 100%; padding: 12px 16px 12px 42px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; color: #fff; font-size: 14px; appearance: none; outline: none; transition: var(--transition);">
-              <option value="daegu" style="background:#1a1f2e;">대구대학교 (Daegu. Univ)</option>
-              <option value="hello" style="background:#1a1f2e;">(테스트) Hello LMS (기본형)</option>
-              <option value="knu" style="background:#1a1f2e;">경북대학교 (KNU)</option>
-              <option value="kmooc" style="background:#1a1f2e;">K-MOOC (국가평생교육진흥원)</option>
-            </select>
-          </div>
-        </div>
-
-        <!-- 학번 입력 -->
-        <div class="input-group">
-          <label for="login-id">학번 / 아이디</label>
-          <div class="input-wrapper">
-            <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-              <circle cx="12" cy="7" r="4" />
-            </svg>
-            <input type="text" id="login-id" placeholder="학번을 입력하세요" required>
-          </div>
-        </div>
-
-        <!-- 비밀번호 입력 -->
-        <div class="input-group">
-          <label for="login-pw">비밀번호</label>
-          <div class="input-wrapper">
-            <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-              <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
-              <path d="M7 11V7a5 5 0 0 1 10 0v4" />
-            </svg>
-            <input type="password" id="login-pw" placeholder="비밀번호를 입력하세요" required>
-          </div>
-        </div>
-
-        <!-- 로그인 버튼 -->
-        <button type="submit" id="login-btn" class="btn-primary">
-          <span class="btn-text">로그인</span>
-          <div class="btn-loader" style="display:none;">
-            <div class="spinner"></div>
-          </div>
-        </button>
-      </form>
-
-      <div id="login-status" class="status-msg"></div>
-      <p class="login-hint">안전한 로그인을 위해 2차 인증을 준비해 주세요.</p>
     </div>
   </section>
 
-  <!-- ===== 대시보드 뷰 ===== -->
-  <section id="dashboard-view" class="view" style="flex-direction:row; padding:0; overflow:hidden;">
-    <div class="dashboard-main"
-      style="flex:1; overflow-y:auto; padding: 32px 40px 48px; display:flex; flex-direction:column; gap:32px;">
-      <!-- 상단 프로필 바 -->
-      <div class="dash-header">
-        <div class="profile-area">
-          <div class="profile-avatar">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-              <circle cx="12" cy="7" r="4" />
-            </svg>
-          </div>
-          <div class="profile-text">
-            <h2 id="profile-name">사용자</h2>
-            <span id="profile-dept" class="profile-sub">학번 등 상세 정보</span>
-          </div>
-        </div>
-        <div class="header-actions">
-          <button id="toggle-schedule-btn"
-            style="display:flex; align-items:center; gap:6px; padding:8px 16px; border-radius:999px; background:#fff; border:1px solid var(--border); font-size:14px; font-weight:700; color:var(--text); cursor:pointer; box-shadow:var(--shadow-sm); transition:all 0.2s;">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"
-              style="color:var(--text-muted);">
-              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-              <line x1="16" y1="2" x2="16" y2="6"></line>
-              <line x1="8" y1="2" x2="8" y2="6"></line>
-              <line x1="3" y1="10" x2="21" y2="10"></line>
-            </svg>
-            시간표
-          </button>
-          <button id="toggle-sidebar-btn"
-            style="display:flex; align-items:center; gap:6px; padding:8px 16px; border-radius:999px; background:#fff; border:1px solid var(--border); font-size:14px; font-weight:700; color:var(--text); cursor:pointer; box-shadow:var(--shadow-sm); transition:all 0.2s;">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"
-              style="color:var(--accent);">
-              <path d="M12 2a10 10 0 1 0 10 10H12V2z" />
-            </svg>
-            AI 튜터
-          </button>
-          <div id="crawl-status" class="crawl-badge" style="display:none !important;">
-            <div class="pulse-dot"></div>
-            <span>데이터 동기화 준비</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- 진행 상황 -->
-      <div id="progress-section" class="progress-section" style="display:none !important;">
-        <div class="progress-bar-track">
-          <div id="progress-bar" class="progress-bar-fill"></div>
-        </div>
-        <p id="progress-text" class="progress-text">대기 중...</p>
-      </div>
-
-      <!-- 사용자 정보 카드 -->
-      <div id="user-info-section" class="info-section" style="display:none;">
-        <h3 class="section-title">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="22" height="22">
-            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-            <circle cx="12" cy="7" r="4" />
-          </svg>
-          학생 정보
-        </h3>
-        <div id="user-info-grid" class="info-grid"></div>
-      </div>
-
-      <!-- 과목 카드 그리드 -->
-      <div id="courses-section" class="courses-section" style="display:none;">
-        <h3 class="section-title">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="22" height="22">
-            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
-            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
-          </svg>
-          이번 학기 수강 과목
-          <span id="course-count" class="badge">0</span>
-        </h3>
-        <div id="course-grid" class="course-grid"></div>
-      </div>
-
-      <!-- AI 사이드바 (우측 하단 고정 메시지 박스) -->
-      <div id="ai-sidebar" class="ai-sidebar"
-        style="position: fixed; right: 32px; bottom: 32px; width: 380px; height: 600px; max-height: 80vh; z-index: 9999; background: var(--bg-surface); border: 1px solid var(--border); border-radius: 20px; box-shadow: var(--shadow-hover); display: none; flex-direction: column; opacity: 0; transform: translateY(20px); transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1); overflow: hidden;">
-        <div class="ai-sidebar-header"
-          style="padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: var(--accent); color: white;">
-          <div style="display: flex; align-items: center; gap: 10px;">
-            <div
-              style="width: 32px; height: 32px; border-radius: 50%; background: rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center;">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16" height="16">
-                <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
-              </svg>
+  <section id="dashboard-view" class="view">
+    <div class="dashboard-shell">
+      <main class="dashboard-main">
+        <section class="hero-card">
+          <div class="hero-copy-block">
+            <div class="hero-meta-row">
+              <span id="dashboard-platform-badge" class="platform-badge">대구대학교</span>
+              <span id="dashboard-sync-state" class="status-chip neutral">연결 준비</span>
             </div>
-            <div>
-              <h3 style="font-size: 15px; font-weight: 700; margin: 0;">스마트 어시스턴트</h3>
-              <span style="font-size: 11px; opacity: 0.8;">온라인 · 답변 대기중</span>
-            </div>
+            <h1 id="dashboard-greeting">학습 흐름을 정리하는 중입니다</h1>
+            <p id="dashboard-summary-text" class="hero-desc">
+              로그인 후 과목, 공지, 자료, 시간표를 우선순위에 맞게 재배치해 보여줍니다.
+            </p>
           </div>
-          <button id="close-sidebar-btn"
-            style="width: 28px; height: 28px; font-size: 18px; border: none; background: transparent; color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; opacity: 0.8; transition: opacity 0.2s;">&times;</button>
-        </div>
 
-        <div class="ai-chat-body" id="main-ai-chat"
-          style="flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 16px; background: #f8fafc;">
-          <div class="chat-msg ai" style="box-shadow: var(--shadow-sm);">
-            안녕하세요! 스마트 어시스턴트입니다. 오늘의 일정이나 과목에 대해 물어보세요!
-          </div>
-        </div>
-        <div class="ai-chat-input"
-          style="padding: 12px 16px; border-top: 1px solid var(--border); background: var(--bg-surface);">
-          <form id="main-ai-form" style="display: flex; gap: 10px;" autocomplete="off">
-            <input type="text" id="main-ai-input" placeholder="메시지를 입력하세요..."
-              style="flex: 1; padding: 12px 16px; border-radius: 24px; border: 1px solid var(--border); background: #f1f5f9; font-size: 14px; outline: none; transition: border-color 0.2s;">
-            <button type="submit"
-              style="width: 42px; height: 42px; border-radius: 50%; border: none; background: var(--accent); color: white; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: transform 0.15s, box-shadow 0.2s; box-shadow: var(--shadow-sm); flex-shrink: 0;">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"
-                style="transform: translateX(-1px) translateY(1px);">
-                <line x1="22" y1="2" x2="11" y2="13"></line>
-                <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+          <div class="hero-actions">
+            <button id="toggle-schedule-btn" type="button" class="secondary-btn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                <line x1="16" y1="2" x2="16" y2="6"></line>
+                <line x1="8" y1="2" x2="8" y2="6"></line>
+                <line x1="3" y1="10" x2="21" y2="10"></line>
               </svg>
+              시간표 보기
             </button>
-          </form>
-        </div>
-      </div>
+            <button id="toggle-sidebar-btn" type="button" class="secondary-btn accent-subtle">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 2a10 10 0 1 0 10 10H12V2z"></path>
+              </svg>
+              AI 패널
+            </button>
+            <button id="btn-logout" type="button" class="secondary-btn danger">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                <polyline points="16 17 21 12 16 7"></polyline>
+                <line x1="21" y1="12" x2="9" y2="12"></line>
+              </svg>
+              로그아웃
+            </button>
+          </div>
+        </section>
+
+        <section class="overview-grid">
+          <article class="metric-card">
+            <span class="metric-label">수강 과목</span>
+            <strong id="overview-course-count" class="metric-value">0</strong>
+            <p id="overview-course-caption" class="metric-caption">연결 후 자동 집계됩니다.</p>
+          </article>
+          <article class="metric-card">
+            <span class="metric-label">세부 동기화</span>
+            <strong id="overview-sync-count" class="metric-value">0 / 0</strong>
+            <p id="overview-sync-caption" class="metric-caption">과목 상세 준비 전입니다.</p>
+          </article>
+          <article class="metric-card">
+            <span class="metric-label">시간표 항목</span>
+            <strong id="overview-timetable-count" class="metric-value">0</strong>
+            <p id="overview-timetable-caption" class="metric-caption">시간표 정보가 준비되면 표시됩니다.</p>
+          </article>
+          <article class="metric-card">
+            <span class="metric-label">마지막 동기화</span>
+            <strong id="overview-last-sync" class="metric-value compact">대기 중</strong>
+            <p id="overview-last-sync-caption" class="metric-caption">아직 동기화가 완료되지 않았습니다.</p>
+          </article>
+        </section>
+
+        <section id="progress-section" class="progress-section">
+          <div class="progress-header">
+            <div>
+              <span class="section-kicker">동기화 상태</span>
+              <h3 id="progress-heading" class="panel-title">데이터를 준비하고 있습니다</h3>
+            </div>
+            <div id="crawl-status" class="crawl-badge neutral">
+              <div class="pulse-dot"></div>
+              <span>연결 준비</span>
+            </div>
+          </div>
+          <div class="progress-bar-track">
+            <div id="progress-bar" class="progress-bar-fill"></div>
+          </div>
+          <p id="progress-text" class="progress-text">로그인 이후 수집된 데이터가 이 영역에 표시됩니다.</p>
+        </section>
+
+        <section id="courses-section" class="panel-section course-panel">
+          <div class="panel-head">
+            <div>
+              <span class="section-kicker">강의 탐색</span>
+              <h3 class="panel-title">
+                이번 학기 수강 과목
+                <span id="course-count" class="badge">0</span>
+              </h3>
+            </div>
+            <label class="search-field" for="course-search">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+              <input id="course-search" type="search" placeholder="과목명, 코드, 일정 검색">
+            </label>
+          </div>
+          <p id="course-summary" class="section-caption">연결된 과목이 여기에 정리됩니다.</p>
+          <div id="course-grid" class="course-grid"></div>
+        </section>
+
+        <section id="user-info-section" class="panel-section">
+          <div class="panel-head">
+            <div>
+              <span class="section-kicker">프로필</span>
+              <h3 class="panel-title">학생 정보</h3>
+            </div>
+          </div>
+          <div id="user-info-grid" class="info-grid"></div>
+        </section>
+      </main>
+
+      <aside class="dashboard-side">
+        <section class="side-card profile-card">
+          <div class="profile-area">
+            <div class="profile-avatar">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+              </svg>
+            </div>
+            <div class="profile-text">
+              <h2 id="profile-name">사용자</h2>
+              <span id="profile-dept" class="profile-sub">학번과 기본 정보가 여기에 표시됩니다.</span>
+            </div>
+          </div>
+          <div id="profile-meta-list" class="profile-meta-list"></div>
+        </section>
+
+        <section class="side-card schedule-card">
+          <div class="panel-head compact">
+            <div>
+              <span class="section-kicker">시간표 요약</span>
+              <h3 class="panel-title">수업 일정</h3>
+            </div>
+            <button id="open-schedule-inline" type="button" class="text-btn">전체 보기</button>
+          </div>
+          <div id="schedule-preview" class="schedule-preview-list"></div>
+        </section>
+
+        <section id="ai-sidebar" class="assistant-panel collapsed">
+          <div class="assistant-header">
+            <div class="assistant-brand">
+              <div class="assistant-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                  <path d="M12 2v20"></path>
+                  <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                </svg>
+              </div>
+              <div>
+                <h3>스마트 어시스턴트</h3>
+                <span id="assistant-status-text">과목과 일정 기반으로 빠르게 도와드립니다.</span>
+              </div>
+            </div>
+            <button id="close-sidebar-btn" type="button" class="icon-btn" aria-label="AI 패널 닫기">&times;</button>
+          </div>
+
+          <div class="assistant-collapse-note">
+            과목 목록, 일정, 학습 상태를 바탕으로 지금 필요한 정보를 바로 물어볼 수 있습니다.
+          </div>
+
+          <div class="assistant-body">
+            <div class="ai-chat-body" id="main-ai-chat"></div>
+            <div class="ai-chat-input">
+              <form id="main-ai-form" autocomplete="off">
+                <input type="text" id="main-ai-input" placeholder="예: 오늘 일정 요약해줘">
+                <button type="submit" class="icon-submit-btn" aria-label="메시지 전송">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="22" y1="2" x2="11" y2="13"></line>
+                    <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                  </svg>
+                </button>
+              </form>
+            </div>
+          </div>
+        </section>
+      </aside>
+    </div>
   </section>
 
-  <!-- ===== 과목 상세 모달 ===== -->
   <div id="course-modal" class="modal-overlay">
     <div class="modal modal-large">
       <div class="modal-header">
         <h2 id="modal-title">강의 상세</h2>
-        <button id="modal-close" class="modal-close-btn">&times;</button>
+        <button id="modal-close" class="modal-close-btn" aria-label="과목 상세 닫기">&times;</button>
       </div>
 
       <div class="modal-layout-wrapper">
@@ -237,76 +377,75 @@
           <div class="modal-tabs">
             <button class="tab" data-tab="ai">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M12 2a10 10 0 1 0 10 10H12V2z" />
+                <path d="M12 2a10 10 0 1 0 10 10H12V2z"></path>
               </svg>
-              ✨ AI 튜터
+              AI 튜터
             </button>
             <button class="tab active" data-tab="plan">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                <polyline points="14 2 14 8 20 8" />
-                <line x1="16" y1="13" x2="8" y2="13" />
-                <line x1="16" y1="17" x2="8" y2="17" />
-                <polyline points="10 9 9 9 8 9" />
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+                <line x1="16" y1="13" x2="8" y2="13"></line>
+                <line x1="16" y1="17" x2="8" y2="17"></line>
+                <polyline points="10 9 9 9 8 9"></polyline>
               </svg>
               강의계획서
             </button>
             <button class="tab" data-tab="notices">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
-                <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
               </svg>
               공지사항
             </button>
             <button class="tab" data-tab="qna">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="12" cy="12" r="10" />
-                <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
-                <line x1="12" y1="17" x2="12.01" y2="17" />
+                <circle cx="12" cy="12" r="10"></circle>
+                <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                <line x1="12" y1="17" x2="12.01" y2="17"></line>
               </svg>
               질의응답
             </button>
             <button class="tab" data-tab="materials">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
+                <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
               </svg>
               강의자료
             </button>
             <button class="tab" data-tab="projects">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-                <circle cx="9" cy="7" r="4" />
-                <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
-                <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                <circle cx="9" cy="7" r="4"></circle>
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
               </svg>
               과제/프로젝트
             </button>
             <button class="tab" data-tab="tests">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <polygon
-                  points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
               </svg>
               시험/퀴즈
             </button>
             <button class="tab" data-tab="discuss">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
               </svg>
               토론
             </button>
             <button class="tab" data-tab="clicker">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <polygon points="12 2 2 7 12 12 22 7 12 2" />
-                <polyline points="2 12 12 17 22 12" />
-                <polyline points="2 17 12 22 22 17" />
+                <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+                <polyline points="2 12 12 17 22 12"></polyline>
+                <polyline points="2 17 12 22 22 17"></polyline>
               </svg>
               투표
             </button>
             <button class="tab" data-tab="survey">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
-                <line x1="12" y1="8" x2="12" y2="16" />
-                <line x1="8" y1="12" x2="16" y2="12" />
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                <line x1="12" y1="8" x2="12" y2="16"></line>
+                <line x1="8" y1="12" x2="16" y2="12"></line>
               </svg>
               설문
             </button>
@@ -321,41 +460,35 @@
     </div>
   </div>
 
-  <!-- ===== 공지/과제 등 상세 컨텐츠 모달 ===== -->
-  <div id="detail-modal" class="modal-overlay" style="display: none; z-index: 6000;">
-    <div class="modal" style="max-width: 800px; height: auto; max-height: 85vh;">
+  <div id="detail-modal" class="modal-overlay detail-overlay">
+    <div class="modal modal-compact">
       <div class="modal-header">
         <h2 id="detail-title">상세 보기</h2>
-        <button id="detail-close" class="modal-close-btn">&times;</button>
+        <button id="detail-close" class="modal-close-btn" aria-label="상세 모달 닫기">&times;</button>
       </div>
 
-      <div id="detail-body" class="modal-body"
-        style="border-radius: 0 0 24px 24px; overflow-y: auto; max-height: calc(85vh - 88px);">
-        <div id="detail-loading" style="text-align:center; padding:60px 20px;">
-          <div class="spinner" style="border-color:#e2e8f0; border-top-color:#4f46e5; margin: 0 auto;"></div>
-          <p style="margin-top:20px; color:#64748b; font-weight: 500;">본문 내용을 불러오는 중입니다...</p>
+      <div id="detail-body" class="modal-body detail-body-shell">
+        <div id="detail-loading" class="detail-loading">
+          <div class="spinner detail-spinner"></div>
+          <p>본문 내용을 불러오는 중입니다...</p>
         </div>
-        <div id="detail-content" style="display:none;"></div>
+        <div id="detail-content" class="detail-content"></div>
       </div>
     </div>
   </div>
 
-  <!-- ===== 별도 시간표 팝업 모달 ===== -->
-  <div id="schedule-modal" class="modal-overlay" style="display: none; z-index: 6000;">
-    <div class="modal" style="max-width: 500px; height: auto; max-height: 85vh;">
+  <div id="schedule-modal" class="modal-overlay detail-overlay">
+    <div class="modal modal-schedule">
       <div class="modal-header">
-        <h2>📅 오늘의 일정</h2>
-        <button id="schedule-close" class="modal-close-btn">&times;</button>
+        <h2 id="schedule-modal-title">시간표 요약</h2>
+        <button id="schedule-close" class="modal-close-btn" aria-label="시간표 닫기">&times;</button>
       </div>
-      <div class="modal-body" style="padding: 32px 24px; border-radius: 0 0 24px 24px; background: #f8fafc;">
-        <div id="daily-timeline" class="timeline">
-          <!-- Timetable generated by JS -->
-        </div>
+      <div class="modal-body schedule-modal-body">
+        <div id="daily-timeline" class="timeline"></div>
       </div>
     </div>
   </div>
 
   <script src="renderer.js"></script>
 </body>
-
 </html>
